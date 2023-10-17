@@ -1,3 +1,7 @@
 import pandas as pd
 
-#pathname = //Repo Path to Parquet Files
+file_name = 'wards_placed.parquet'
+
+df = pd.read_parquet(file_name)
+
+print(df) 
