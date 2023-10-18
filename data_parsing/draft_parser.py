@@ -29,41 +29,62 @@ df = pd.read_parquet(pathname, columns=['team_1_name',
                                           'team_2_sup', 'team_2_sup_pick_num'])
 
 
-C9TopLanePicks = {}
-GGTopLanePicks = {}
+C9RolePicks = {}
+GGRolePicks = {}
+
+C9ChampPriority = {}
+GGChampPriority = {}
 
 for index, row in df.iterrows():
-  if (row['team_1_name'] == 'C9'):
-    team_1_name = row['team_1_name']
-    team_1_top = row['team_1_top']
+    if (row['team_1_name'] == 'C9'):
+        team_1_name = row['team_1_name']
+        roles = ['top', 'jng', 'mid', 'bot', 'sup']
 
-    # Check if the team_1_name is already in the dictionary, if not, add it
-    if team_1_name not in C9TopLanePicks:
-        C9TopLanePicks[team_1_name] = {}
+        for role in roles:
+            role_column = 'team_1_' + role
+            role_pick_num_column = 'team_1_' + role + '_pick_num'
 
-    # Check if the team_1_top is already in the nested dictionary, if not, add it
-    if team_1_top not in C9TopLanePicks[team_1_name]:
-        C9TopLanePicks[team_1_name][team_1_top] = 0
+            role_name = row[role_column]
+            role_pick_num = row[role_pick_num_column]
 
-    # Increment the count for the current team_1_top
-    C9TopLanePicks[team_1_name][team_1_top] += 1
+            if role_name not in C9RolePicks:
+                C9RolePicks[role_name] = 1
+                C9ChampPriority[role_name] = role_pick_num
+            else:
+                C9RolePicks[role_name] += 1
+                C9ChampPriority[role_name] += role_pick_num
 
-for index, row in df.iterrows():
-  if (row['team_2_name'] == 'GG'):
-    team_2_name = row['team_2_name']
-    team_2_top = row['team_2_top']
+    if (row['team_2_name'] == 'GG'):
+        team_2_name = row['team_2_name']
+        roles = ['top', 'jng', 'mid', 'bot', 'sup']
 
-    # Check if the team_1_name is already in the dictionary, if not, add it
-    if team_2_name not in GGTopLanePicks:
-        GGTopLanePicks[team_2_name] = {}
+        for role in roles:
+            role_column = 'team_2_' + role
+            role_pick_num_column = 'team_2_' + role + '_pick_num'
 
-    # Check if the team_1_top is already in the nested dictionary, if not, add it
-    if team_2_top not in GGTopLanePicks[team_2_name]:
-        GGTopLanePicks[team_2_name][team_2_top] = 0
+            role_name = row[role_column]
+            role_pick_num = row[role_pick_num_column]
 
-    # Increment the count for the current team_1_top
-    GGTopLanePicks[team_2_name][team_2_top] += 1
+            if role_name not in GGRolePicks:
+                GGRolePicks[role_name] = 1
+                GGChampPriority[role_name] = role_pick_num
+            else:
+                GGRolePicks[role_name] += 1
+                GGChampPriority[role_name] += role_pick_num
 
+for key in C9ChampPriority:
+    C9ChampPriority[key] /= C9RolePicks[key]
 
-print(C9TopLanePicks)
-print(GGTopLanePicks)
+for key in GGChampPriority:
+    GGChampPriority[key] /= GGRolePicks[key]
+
+C9_sorted_priority = sorted(C9ChampPriority.items(), key=lambda x:x[1])
+C9_converted_dict = dict(C9_sorted_priority)
+
+GG_sorted_priority = sorted(GGChampPriority.items(), key=lambda x:x[1])
+GG_converted_dict = dict(GG_sorted_priority)
+
+print("C9 Priorities:", C9_converted_dict)
+print("GG Priorities:", GG_converted_dict)
+
+#Drafting Algorithm - Scale of 0 - 1.0 
