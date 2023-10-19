@@ -18,9 +18,9 @@ pd.set_option('display.max_rows', None)
 #df_gg.to_csv('parsed/gg.csv')
 
 df = pd.read_parquet(pathname, columns=['team_1_name', 'team_1_side', 
-                                          'bb1', 'bb2', 'bb3', 'bb4', 'bb5',
+                                          'bb1', 'bb2', 'bb3', 'bb4', 'bb5', 'bp1', 'bp2', 'bp3', 'bp4', 'bp5',
                                         'team_2_name', 'team_2_side',
-                                          'rb1', 'rb2', 'rb3', 'rb4', 'rb5'])
+                                          'rb1', 'rb2', 'rb3', 'rb4', 'rb5', 'rp1', 'rp2', 'rp3', 'rp4', 'rp5'])
 
 c9_bans = df[(df['team_1_name'] == 'C9') | (df['team_2_name'] == 'C9')]
 gg_bans = df[df['team_2_name'] == 'GG']
@@ -89,5 +89,29 @@ for index, row in c9_bans.iterrows():
     else:
       c9_ban_freq[champion] = 1
   
+c9_champs_picked_blue = []
+c9_champs_picked_red = []
 
-print(c9_ban_freq)
+for index, row in df.iterrows():
+  temp_list = []
+  if row['team_1_name'] == 'C9':
+    for i in range(5):
+      pick_num = 'bp' + str(i + 1)
+      if row[pick_num] not in c9_champs_picked_blue:
+        c9_champs_picked_blue.append(row[pick_num])
+
+  elif row['team_2_name'] == 'C9':
+    for i in range(5):
+      pick_num = 'rp' + str(i + 1)
+      if row[pick_num] not in c9_champs_picked_red:
+        c9_champs_picked_red.append(row[pick_num])
+
+print(c9_champs_picked_blue)
+print(c9_champs_picked_red)
+
+for champ in c9_ban_freq.keys():
+  if champ not in c9_champs_picked_blue and champ not in c9_champs_picked_red:
+    print(champ)
+
+
+#print(c9_ban_freq)
