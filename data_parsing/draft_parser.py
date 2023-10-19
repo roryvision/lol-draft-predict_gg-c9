@@ -35,8 +35,11 @@ GGRolePicks = {}
 C9ChampPriority = {}
 GGChampPriority = {}
 
+numGames = 0
+
 for index, row in df.iterrows():
-    if (row['team_1_name'] == 'C9'):
+    numGames += 1
+    if (row['team_1_name'] == 'C9' or row['team_2_name'] == 'C9'):
         team_1_name = row['team_1_name']
         roles = ['top', 'jng', 'mid', 'bot', 'sup']
 
@@ -54,7 +57,7 @@ for index, row in df.iterrows():
                 C9RolePicks[role_name] += 1
                 C9ChampPriority[role_name] += role_pick_num
 
-    if (row['team_2_name'] == 'GG'):
+    if (row['team_1_name'] == 'GG' or row['team_2_name'] == 'GG'):
         team_2_name = row['team_2_name']
         roles = ['top', 'jng', 'mid', 'bot', 'sup']
 
@@ -84,7 +87,48 @@ C9_converted_dict = dict(C9_sorted_priority)
 GG_sorted_priority = sorted(GGChampPriority.items(), key=lambda x:x[1])
 GG_converted_dict = dict(GG_sorted_priority)
 
-print("C9 Priorities:", C9_converted_dict)
-print("GG Priorities:", GG_converted_dict)
+# print("C9 Priorities:", C9_converted_dict)
+# print("GG Priorities:", GG_converted_dict)
 
 #Drafting Algorithm - Scale of 0 - 1.0 
+
+#Bans
+BanLogs = {}
+
+for index, row in dfRaw.iterrows():
+  bans = [row['bb1']]
+  bans.append(row['rb1'])
+  bans.append(row['bb2'])
+  bans.append(row['rb2'])
+  bans.append(row['bb3'])
+  bans.append(row['rb3'])
+  for element in bans:
+    if element not in BanLogs:
+      BanLogs[element] = 1
+    else:
+      BanLogs[element] += 1
+
+# For Visual Aid
+# SortedBanLogs = sorted(BanLogs.items(), key=lambda x:x[1], reverse = True)
+# print (SortedBanLogs)
+
+C9finalPriority = {}
+
+for element in C9_converted_dict:
+  if element not in BanLogs:
+        BanLogs[element] = 0
+  C9finalPriority[element] = C9ChampPriority[element] * (numGames - BanLogs[element]) / C9RolePicks[element]
+  
+SortedC9Priority = sorted(C9finalPriority.items(), key=lambda x:x[1])
+
+GGfinalPriority = {}
+
+for element in GG_converted_dict:
+  if element not in BanLogs:
+        BanLogs[element] = 0
+  GGfinalPriority[element] = GGChampPriority[element] * (numGames - BanLogs[element]) / GGRolePicks[element]
+  
+SortedGGPriority = sorted(GGfinalPriority.items(), key=lambda x:x[1])
+
+print ("Golden Guardians Draft Priority:", SortedGGPriority)
+print ("Cloud9 Draft Priority:", SortedC9Priority)
