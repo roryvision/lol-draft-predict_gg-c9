@@ -8,8 +8,8 @@ pd.set_option('display.max_rows', None)
 
 dfRaw = pd.read_parquet(pathname, columns=['team_1_name', 'team_2_name', 'bb1', 'rb1', 'bb2', 'rb2', 'bb3', 'rb3', 'bp1', 'rp1', 'rp2', 'bp2', 'bp3', 'rp3', 'rb4', 'bb4', 'rb5', 'bb5', 'rp4', 'bp4', 'bp5', 'rp5'])
 
-df_gg = dfRaw[dfRaw['team_1_name'] == 'C9']
-df_c9 = dfRaw[dfRaw['team_2_name'] == 'GG']
+df_gg = dfRaw[(dfRaw['team_1_name'] == 'GG') | (dfRaw['team_2_name'] == 'GG')]
+df_c9 = dfRaw[(dfRaw['team_1_name'] == 'C9') | (dfRaw['team_2_name'] == 'C9')]
 
 dfRaw.to_csv('./data_parsing/parsed/raw')
 df_gg.to_csv('./data_parsing/parsed/gg')
