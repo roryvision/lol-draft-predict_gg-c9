@@ -8,13 +8,6 @@ pd.set_option('display.max_rows', None)
 
 dfRaw = pd.read_parquet(pathname, columns=['team_1_name', 'team_2_name', 'bb1', 'rb1', 'bb2', 'rb2', 'bb3', 'rb3', 'bp1', 'rp1', 'rp2', 'bp2', 'bp3', 'rp3', 'rb4', 'bb4', 'rb5', 'bb5', 'rp4', 'bp4', 'bp5', 'rp5'])
 
-df_c9 = dfRaw[dfRaw['team_1_name'] == 'C9']
-df_gg = dfRaw[dfRaw['team_2_name'] == 'GG']
-
-dfRaw.to_csv('./lol-draft-predict_gg-c9\data_parsing\parsed/raw')
-df_gg.to_csv('./lol-draft-predict_gg-c9\data_parsing\parsed/gg')
-df_c9.to_csv('./lol-draft-predict_gg-c9\data_parsing\parsed/c9')
-
 df = pd.read_parquet(pathname, columns=['team_1_name', 
                                           'team_1_top', 'team_1_top_pick_num',
                                           'team_1_jng', 'team_1_jng_pick_num',
@@ -131,4 +124,5 @@ for element in GG_converted_dict:
 SortedGGPriority = sorted(GGfinalPriority.items(), key=lambda x:x[1])
 
 print ("Golden Guardians Draft Priority:", SortedGGPriority)
+print()
 print ("Cloud9 Draft Priority:", SortedC9Priority)
