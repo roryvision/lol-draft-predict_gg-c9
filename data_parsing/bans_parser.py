@@ -113,5 +113,27 @@ for champ in c9_ban_freq.keys():
   if champ not in c9_champs_picked_blue and champ not in c9_champs_picked_red:
     print(champ)
 
+c9_bp1 = {}
+for index, row in df.iterrows():
+  if row['team_1_name'] == 'C9':
+    champ = row['bp1']
+    if row['bp1'] not in c9_bp1:
+      c9_bp1[champ] = 1
+    else:
+      c9_bp1[champ] += 1
+
+c9_rp1_rp2 = {}
+
+for index, row in df.iterrows():
+  if row['team_2_name'] == 'C9':
+    champs = row['bp1'] + ' ' + row['rp1'] + ' ' + row['rp2']
+    if champs not in c9_rp1_rp2:
+      c9_rp1_rp2[champs] = 1
+    else:
+      c9_rp1_rp2[champs] += 1
+
+print(c9_bp1)
+print()
+print(c9_rp1_rp2)
 
 #print(c9_ban_freq)
